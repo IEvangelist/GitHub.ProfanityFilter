@@ -9,5 +9,7 @@
         public string Repo { get; set; } = "GitHub.ProfanityFilter";
 
         public string WebhookSecret { get; set; }
+
+        public string ProfaneLabelId { get; set; } = "MDU6TGFiZWwxNTI1MDA4Mzkz";
     }
 }

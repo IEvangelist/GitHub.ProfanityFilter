@@ -2,7 +2,9 @@
 using IEvangelist.GitHub.Services.Filters;
 using IEvangelist.GitHub.Services.GraphQL;
 using IEvangelist.GitHub.Services.Hanlders;
+using IEvangelist.GitHub.Services.Options;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Octokit;
 using Octokit.GraphQL.Model;
 using System;
@@ -13,12 +15,15 @@ namespace IEvangelist.GitHub.Services.Handlers
     public class IssueHandler : GitHubBaseHandler<IssueHandler>, IIssueHandler
     {
         readonly IProfanityFilter _profanityFilter;
+        readonly GitHubOptions _options;
 
         public IssueHandler(
             IGitHubGraphQLClient client,
             ILogger<IssueHandler> logger,
+            IOptions<GitHubOptions> options,
             IProfanityFilter profanityFilter)
-            : base(client, logger) => _profanityFilter = profanityFilter;
+            : base(client, logger) =>
+            (_profanityFilter, _options) = (profanityFilter, options.Value);
 
         public async ValueTask HandleIssueAsync(string payloadJson)
         {
@@ -36,10 +41,10 @@ namespace IEvangelist.GitHub.Services.Handlers
                 switch (payload.Action)
                 {
                     case "opened":
-                        await HandleIssueOpenedAsync(payload);
+                    case "edited":
+                        await HandleIssueAsync(payload);
                         break;
 
-                    case "edited":
                     case "deleted":
                     case "transferred":
                     case "pinned":
@@ -63,14 +68,12 @@ namespace IEvangelist.GitHub.Services.Handlers
             }
         }
 
-        async ValueTask HandleIssueOpenedAsync(IssueEventPayload payload)
+        async ValueTask HandleIssueAsync(IssueEventPayload payload)
         {
-            var issue = payload.Issue;
-
             try
             {
+                var issue = payload.Issue;
                 var clientId = Guid.NewGuid().ToString();
-                //await _client.AddLabelAsync(issue.NodeId, new[] { "MDU6TGFiZWwxNDY5Mjc4NzMx" }, clientId);
 
                 var (replaceTitle, replaceBody) =
                     (_profanityFilter.IsProfane(issue.Title), _profanityFilter.IsProfane(issue.Body));
@@ -83,17 +86,15 @@ namespace IEvangelist.GitHub.Services.Handlers
                     _logger.LogInformation($"Replaced title: {title}");
                     _logger.LogInformation($"Replaced body: {body}");
 
-                    //await _client.AddReactionAsync(issue.NodeId, ReactionContent.Confused, clientId);
-
-                    var input = new UpdateIssueInput
+                    await _client.AddReactionAsync(issue.NodeId, ReactionContent.Confused, clientId);
+                    await _client.AddLabelAsync(issue.NodeId, new[] { _options.ProfaneLabelId }, clientId);
+                    await _client.UpdateIssueAsync(new UpdateIssueInput
                     {
                         Id = issue.NodeId.ToGitHubId(),
                         Title = title,
                         Body = body,
                         ClientMutationId = clientId
-                    };
-
-                    //await _client.UpdateIssueAsync(input);
+                    });
                 }
             }
             catch (Exception ex)
