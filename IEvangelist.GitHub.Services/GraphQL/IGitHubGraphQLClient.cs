@@ -1,4 +1,5 @@
-﻿using Octokit.GraphQL.Model;
+﻿using Octokit;
+using Octokit.GraphQL.Model;
 using System.Threading.Tasks;
 
 namespace IEvangelist.GitHub.Services.GraphQL
@@ -15,6 +16,10 @@ namespace IEvangelist.GitHub.Services.GraphQL
 
         ValueTask<string> UpdateIssueAsync(UpdateIssueInput input);
 
+        ValueTask<string> UpdateIssueAsync(int number, IssueUpdate input);
+
         ValueTask<string> UpdatePullRequestAsync(UpdatePullRequestInput input);
+
+        ValueTask<string> UpdatePullRequestAsync(int number, PullRequestUpdate input);
     }
 }

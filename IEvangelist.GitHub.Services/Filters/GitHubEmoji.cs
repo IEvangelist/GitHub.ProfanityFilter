@@ -9,7 +9,7 @@ namespace IEvangelist.GitHub.Services.Filters
         {
             ":rage:",
             ":boom:",
-            ":hanky:",
+            ":poop:",
             ":fire:",
             ":facepunch:",
             ":weary:",
@@ -24,8 +24,6 @@ namespace IEvangelist.GitHub.Services.Filters
             ":rage2:",
             ":beer:",
             ":cocktail:",
-            ":do_not_litter:",
-            ":no_pedestrians:",
             ":scream:",
             ":smirk:",
             ":flushed:",

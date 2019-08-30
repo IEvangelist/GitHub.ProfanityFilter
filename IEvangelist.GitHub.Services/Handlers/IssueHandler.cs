@@ -88,13 +88,12 @@ namespace IEvangelist.GitHub.Services.Handlers
 
                     await _client.AddReactionAsync(issue.NodeId, ReactionContent.Confused, clientId);
                     await _client.AddLabelAsync(issue.NodeId, new[] { _options.ProfaneLabelId }, clientId);
-                    await _client.UpdateIssueAsync(new UpdateIssueInput
-                    {
-                        Id = issue.NodeId.ToGitHubId(),
-                        Title = title,
-                        Body = body,
-                        ClientMutationId = clientId
-                    });
+
+                    var updateIssue = issue.ToUpdate();
+                    updateIssue.Title = title;
+                    updateIssue.Body = body;
+
+                    await _client.UpdateIssueAsync(issue.Number, updateIssue);
                 }
             }
             catch (Exception ex)

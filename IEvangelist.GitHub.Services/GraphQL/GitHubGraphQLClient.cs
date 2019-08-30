@@ -1,11 +1,19 @@
 ﻿using IEvangelist.GitHub.Services.Extensions;
 using IEvangelist.GitHub.Services.Options;
 using Microsoft.Extensions.Options;
+using Octokit;
 using Octokit.GraphQL;
 using Octokit.GraphQL.Model;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+
+using IGraphQLConnection = Octokit.GraphQL.IConnection;
+using GraphQLConnection = Octokit.GraphQL.Connection;
+using GraphQLProductHeaderValue = Octokit.GraphQL.ProductHeaderValue;
+
+using Connection = Octokit.Connection;
+using ProductHeaderValue = Octokit.ProductHeaderValue;
 
 namespace IEvangelist.GitHub.Services.GraphQL
 {
@@ -14,13 +22,18 @@ namespace IEvangelist.GitHub.Services.GraphQL
         const string ProductID = "GitHub.ProfanityFilter";
         const string ProductVersion = "1.0";
 
-        readonly IConnection _connection;
+        readonly IGraphQLConnection _connection;
+        readonly IGitHubClient _client;
         readonly GitHubOptions _config;
 
         public GitHubGraphQLClient(IOptions<GitHubOptions> config)
         {
             _config = config?.Value ?? throw new ArgumentNullException(nameof(config));
-            _connection = new Connection(new ProductHeaderValue(ProductID, ProductVersion), _config.ApiToken);
+            _connection = new GraphQLConnection(new GraphQLProductHeaderValue(ProductID, ProductVersion), _config.ApiToken);
+            _client = new GitHubClient(new Connection(new ProductHeaderValue(ProductID, ProductVersion))
+            {
+                Credentials = new Credentials(_config.ApiToken)
+            });
         }
 
         public async ValueTask<string> AddLabelAsync(string issueOrPullRequestId, string[] labelIds, string clientId)
@@ -117,6 +130,12 @@ namespace IEvangelist.GitHub.Services.GraphQL
             return result.ClientMutationId;
         }
 
+        public async ValueTask<string> UpdateIssueAsync(int number, IssueUpdate input)
+        {
+            var result = await _client.Issue.Update(_config.Owner, _config.Repo, number, input);
+            return result.NodeId;
+        }
+
         public async ValueTask<string> UpdatePullRequestAsync(UpdatePullRequestInput input)
         {
             var mutation =
@@ -130,6 +149,12 @@ namespace IEvangelist.GitHub.Services.GraphQL
 
             var result = await _connection.Run(mutation);
             return result.ClientMutationId;
+        }
+
+        public async ValueTask<string> UpdatePullRequestAsync(int number, PullRequestUpdate input)
+        {
+            var result = await _client.PullRequest.Update(_config.Owner, _config.Repo, number, input);
+            return result.NodeId;
         }
     }
 }

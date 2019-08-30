@@ -216,6 +216,7 @@ namespace IEvangelist.GitHub.Services.Filters
             "semen",
             "sex",
             "sexy",
+            "$h!t",
             "Sh!t",
             "sh1t",
             "sh1ter",

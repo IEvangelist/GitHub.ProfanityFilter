@@ -87,12 +87,11 @@ namespace IEvangelist.GitHub.Services.Handlers
 
                     await _client.AddReactionAsync(pullRequest.NodeId, ReactionContent.Confused, clientId);
                     await _client.AddLabelAsync(pullRequest.NodeId, new[] { _options.ProfaneLabelId }, clientId);
-                    await _client.UpdatePullRequestAsync(new UpdatePullRequestInput
+
+                    await _client.UpdatePullRequestAsync(pullRequest.Number, new PullRequestUpdate
                     {
-                        PullRequestId = pullRequest.NodeId.ToGitHubId(),
                         Title = title,
-                        Body = body,
-                        ClientMutationId = clientId
+                        Body = body
                     });
                 }
             }
