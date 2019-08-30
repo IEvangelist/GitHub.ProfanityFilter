@@ -15,9 +15,11 @@ namespace IEvangelist.GitHub.Repository
 
         public Container GetContainer()
         {
-            using var client = new CosmosClient(_options.CosmosConnectionString);
-            var database = client.GetDatabase(_options.DatabaseId);
-            return database.GetContainer(_options.ContainerId);
+            using (var client = new CosmosClient(_options.CosmosConnectionString))
+            {
+                var database = client.GetDatabase(_options.DatabaseId);
+                return database.GetContainer(_options.ContainerId);
+            }
         }
     }
 }

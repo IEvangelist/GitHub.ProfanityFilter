@@ -82,8 +82,8 @@ namespace IEvangelist.GitHub.Services.Handlers
                     var title = replaceTitle ? _profanityFilter.ApplyFilter(pullRequest.Title, '*') : pullRequest.Title;
                     var body = replaceBody ? _profanityFilter.ApplyFilter(pullRequest.Body) : pullRequest.Body;
 
-                    _logger.LogInformation($"Replaced title: {title}");
-                    _logger.LogInformation($"Replaced body: {body}");
+                    if (replaceTitle) _logger.LogInformation($"Replaced title: {title}");
+                    if (replaceBody) _logger.LogInformation($"Replaced body: {body}");
 
                     await _client.AddReactionAsync(pullRequest.NodeId, ReactionContent.Confused, clientId);
                     await _client.AddLabelAsync(pullRequest.NodeId, new[] { _options.ProfaneLabelId }, clientId);

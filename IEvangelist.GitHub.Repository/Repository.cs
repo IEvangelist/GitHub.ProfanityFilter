@@ -1,7 +1,5 @@
-﻿using IEvangelist.GitHub.Repository.Options;
-using Microsoft.Azure.Cosmos;
+﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +13,7 @@ namespace IEvangelist.GitHub.Repository
         readonly ICosmosContainerProvider _containerProvider;
 
         public Repository(
-            ICosmosContainerProvider containerProvider) => 
+            ICosmosContainerProvider containerProvider) =>
             _containerProvider = containerProvider ?? throw new ArgumentNullException(nameof(containerProvider));
 
         public async ValueTask<T> GetAsync(string id)
@@ -26,7 +24,7 @@ namespace IEvangelist.GitHub.Repository
             return response.Resource;
         }
 
-        public async IAsyncEnumerable<T> GetAsync(Expression<Func<T, bool>> predicate)
+        public async ValueTask<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate)
         {
             var iterator =
                 _containerProvider.GetContainer()
@@ -34,13 +32,16 @@ namespace IEvangelist.GitHub.Repository
                                   .Where(predicate)
                                   .ToFeedIterator();
 
+            IList<T> results = new List<T>();
             while (iterator.HasMoreResults)
             {
                 foreach (var result in await iterator.ReadNextAsync())
                 {
-                    yield return result;
-                }                
+                    results.Add(result);
+                }
             }
+
+            return results;
         }
 
         public async ValueTask<T> CreateAsync(T value)

@@ -28,7 +28,8 @@ namespace IEvangelist.GitHub.Webhooks
 
         IServiceCollection ConfigureServices(
             IServiceCollection services, IConfiguration configuration) => 
-            services.AddGitHubServices(configuration)
+            services.AddLogging()
+                    .AddGitHubServices(configuration)
                     .AddSingleton<IGitHubPayloadValidator, GitHubPayloadValidator>();
     }
 }

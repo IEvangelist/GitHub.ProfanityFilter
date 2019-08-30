@@ -9,7 +9,7 @@ namespace IEvangelist.GitHub.Repository
     {
         ValueTask<T> GetAsync(string id);
 
-        IAsyncEnumerable<T> GetAsync(Expression<Func<T, bool>> predicate);
+        ValueTask<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate);
 
         ValueTask<T> CreateAsync(T value);
 
