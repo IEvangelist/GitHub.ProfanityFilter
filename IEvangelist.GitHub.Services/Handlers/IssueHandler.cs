@@ -40,23 +40,29 @@ namespace IEvangelist.GitHub.Services.Handlers
                     _logger.LogWarning("GitHub issue payload is null.");
                     return;
                 }
-
-                var activity = await _repository.GetAsync(payload.Issue.NodeId);
-                if ((DateTime.Now - activity.WorkedOn).TotalSeconds < 1)
-                {
-                    _logger.LogInformation("We just worked on this item...");
-                }
-
+                
                 _logger.LogInformation($"Handling issue: {payload.Action}, {payload.Issue.NodeId}");
 
                 switch (payload.Action)
                 {
                     case "opened":
+                        await HandleIssueAsync(payload, null);
+                        break;
+
                     case "edited":
+                        var activity = await _repository.GetAsync(payload.Issue.NodeId);
+                        if (activity?.WorkedOn.Subtract(DateTime.Now).TotalSeconds <= 1)
+                        {
+                            _logger.LogInformation("We just worked on this item...");
+                        }
+
                         await HandleIssueAsync(payload, activity);
                         break;
 
                     case "deleted":
+                        await _repository.DeleteAsync(payload.Issue.NodeId);
+                        break;
+
                     case "transferred":
                     case "pinned":
                     case "unpinned":
@@ -75,33 +81,24 @@ namespace IEvangelist.GitHub.Services.Handlers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError($"{ex.Message}\n{ex.StackTrace}", ex);
             }
         }
 
-        async ValueTask HandleIssueAsync(IssueEventPayload payload, FilterActivity activity)
+        async ValueTask HandleIssueAsync(IssueEventPayload payload, FilterActivity activity = null)
         {
             try
             {
                 var issue = payload.Issue;
-                var clientId = Guid.NewGuid().ToString();
-
-                var (replaceTitle, replaceBody) =
-                    (_profanityFilter.IsProfane(issue.Title), _profanityFilter.IsProfane(issue.Body));
-
-                if (replaceTitle || replaceBody)
+                var filterRresult = HandleFiltering(issue.Title, issue.Body, _profanityFilter);
+                if (filterRresult.IsFiltered)
                 {
-                    var title = replaceTitle ? _profanityFilter.ApplyFilter(issue.Title, '*') : issue.Title;
-                    var body = replaceBody ? _profanityFilter.ApplyFilter(issue.Body) : issue.Body;
-
-                    if (replaceTitle) _logger.LogInformation($"Replaced title: {title}");
-                    if (replaceBody) _logger.LogInformation($"Replaced body: {body}");
-
                     var updateIssue = issue.ToUpdate();
-                    updateIssue.Title = title;
-                    updateIssue.Body = body;
+                    updateIssue.Title = filterRresult.Title;
+                    updateIssue.Body = filterRresult.Body;
                     await _client.UpdateIssueAsync(issue.Number, updateIssue);
 
+                    var clientId = Guid.NewGuid().ToString();
                     if (activity is null)
                     {
                         await _repository.CreateAsync(new FilterActivity
