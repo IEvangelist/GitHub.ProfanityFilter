@@ -45,18 +45,11 @@ namespace IEvangelist.GitHub.Services.Handlers
 
                 switch (payload.Action)
                 {
-                    case "assigned":
-                    case "unassigned":
-                    case "review_requested":
-                    case "review_request_removed":
-                    case "labeled":
-                    case "unlabeled":
-                        break;
-
                     case "opened":
                         await HandlePullRequestAsync(payload);
                         break;
 
+                    case "reopened":
                     case "edited":
                         var activity = await _repository.GetAsync(payload.PullRequest.NodeId);
                         if (activity?.WorkedOn.Subtract(DateTime.Now).TotalSeconds <= 1)
@@ -68,10 +61,18 @@ namespace IEvangelist.GitHub.Services.Handlers
                         break;
 
                     case "closed":
-                    case "ready_for_review":
+                        await _repository.DeleteAsync(payload.PullRequest.NodeId);
+                        break;
+
+                    case "assigned":
+                    case "labeled":
                     case "locked":
+                    case "ready_for_review":
+                    case "review_request_removed":
+                    case "review_requested":
+                    case "unassigned":
+                    case "unlabeled":
                     case "unlocked":
-                    case "reopened":
                         break;
                 }
             }

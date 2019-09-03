@@ -40,7 +40,7 @@ namespace IEvangelist.GitHub.Services.Handlers
                     _logger.LogWarning("GitHub issue payload is null.");
                     return;
                 }
-                
+
                 _logger.LogInformation($"Handling issue: {payload.Action}, {payload.Issue.NodeId}");
 
                 switch (payload.Action)
@@ -49,6 +49,7 @@ namespace IEvangelist.GitHub.Services.Handlers
                         await HandleIssueAsync(payload);
                         break;
 
+                    case "reopened":
                     case "edited":
                         var activity = await _repository.GetAsync(payload.Issue.NodeId);
                         if (activity?.WorkedOn.Subtract(DateTime.Now).TotalSeconds <= 1)
@@ -59,23 +60,22 @@ namespace IEvangelist.GitHub.Services.Handlers
                         await HandleIssueAsync(payload, activity);
                         break;
 
+                    case "closed":
                     case "deleted":
                         await _repository.DeleteAsync(payload.Issue.NodeId);
                         break;
 
-                    case "transferred":
-                    case "pinned":
-                    case "unpinned":
-                    case "closed":
-                    case "reopened":
                     case "assigned":
-                    case "unassigned":
-                    case "labeled":
-                    case "unlabeled":
-                    case "locked":
-                    case "unlocked":
-                    case "milestoned":
                     case "demilestoned":
+                    case "labeled":
+                    case "locked":
+                    case "milestoned":
+                    case "pinned":
+                    case "transferred":
+                    case "unassigned":
+                    case "unlabeled":
+                    case "unlocked":
+                    case "unpinned":
                         break;
                 }
             }
@@ -96,7 +96,7 @@ namespace IEvangelist.GitHub.Services.Handlers
                 {
                     (title, body) = await _client.GetIssueTitleAndBodyAsync(issue.Number);
                 }
-                
+
                 var filterRresult = HandleFiltering(title, body, _profanityFilter);
                 if (filterRresult.IsFiltered)
                 {
