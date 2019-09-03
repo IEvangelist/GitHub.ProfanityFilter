@@ -85,14 +85,13 @@ namespace IEvangelist.GitHub.Services.Handlers
                     if (replaceTitle) _logger.LogInformation($"Replaced title: {title}");
                     if (replaceBody) _logger.LogInformation($"Replaced body: {body}");
 
-                    await _client.AddReactionAsync(pullRequest.NodeId, ReactionContent.Confused, clientId);
-                    await _client.AddLabelAsync(pullRequest.NodeId, new[] { _options.ProfaneLabelId }, clientId);
-
                     await _client.UpdatePullRequestAsync(pullRequest.Number, new PullRequestUpdate
                     {
                         Title = title,
                         Body = body
                     });
+                    await _client.AddReactionAsync(pullRequest.NodeId, ReactionContent.Confused, clientId);
+                    await _client.AddLabelAsync(pullRequest.NodeId, new[] { _options.ProfaneLabelId }, clientId);
                 }
             }
             catch (Exception ex)

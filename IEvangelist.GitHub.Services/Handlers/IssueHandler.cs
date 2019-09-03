@@ -1,7 +1,10 @@
-﻿using IEvangelist.GitHub.Services.Extensions;
+﻿using IEvangelist.GitHub.Repository;
+using IEvangelist.GitHub.Services.Enums;
+using IEvangelist.GitHub.Services.Extensions;
 using IEvangelist.GitHub.Services.Filters;
 using IEvangelist.GitHub.Services.GraphQL;
 using IEvangelist.GitHub.Services.Hanlders;
+using IEvangelist.GitHub.Services.Models;
 using IEvangelist.GitHub.Services.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -14,16 +17,18 @@ namespace IEvangelist.GitHub.Services.Handlers
 {
     public class IssueHandler : GitHubBaseHandler<IssueHandler>, IIssueHandler
     {
-        readonly IProfanityFilter _profanityFilter;
         readonly GitHubOptions _options;
+        readonly IProfanityFilter _profanityFilter;
+        readonly IRepository<FilterActivity> _repository;
 
         public IssueHandler(
             IGitHubGraphQLClient client,
             ILogger<IssueHandler> logger,
             IOptions<GitHubOptions> options,
-            IProfanityFilter profanityFilter)
+            IProfanityFilter profanityFilter,
+            IRepository<FilterActivity> repository)
             : base(client, logger) =>
-            (_profanityFilter, _options) = (profanityFilter, options.Value);
+            (_profanityFilter, _options, _repository) = (profanityFilter, options.Value, repository);
 
         public async ValueTask HandleIssueAsync(string payloadJson)
         {
@@ -36,13 +41,19 @@ namespace IEvangelist.GitHub.Services.Handlers
                     return;
                 }
 
+                var activity = await _repository.GetAsync(payload.Issue.NodeId);
+                if ((DateTime.Now - activity.WorkedOn).TotalSeconds < 1)
+                {
+                    _logger.LogInformation("We just worked on this item...");
+                }
+
                 _logger.LogInformation($"Handling issue: {payload.Action}, {payload.Issue.NodeId}");
 
                 switch (payload.Action)
                 {
                     case "opened":
                     case "edited":
-                        await HandleIssueAsync(payload);
+                        await HandleIssueAsync(payload, activity);
                         break;
 
                     case "deleted":
@@ -68,7 +79,7 @@ namespace IEvangelist.GitHub.Services.Handlers
             }
         }
 
-        async ValueTask HandleIssueAsync(IssueEventPayload payload)
+        async ValueTask HandleIssueAsync(IssueEventPayload payload, FilterActivity activity)
         {
             try
             {
@@ -86,14 +97,31 @@ namespace IEvangelist.GitHub.Services.Handlers
                     if (replaceTitle) _logger.LogInformation($"Replaced title: {title}");
                     if (replaceBody) _logger.LogInformation($"Replaced body: {body}");
 
-                    await _client.AddReactionAsync(issue.NodeId, ReactionContent.Confused, clientId);
-                    await _client.AddLabelAsync(issue.NodeId, new[] { _options.ProfaneLabelId }, clientId);
-
                     var updateIssue = issue.ToUpdate();
                     updateIssue.Title = title;
                     updateIssue.Body = body;
-
                     await _client.UpdateIssueAsync(issue.Number, updateIssue);
+
+                    if (activity is null)
+                    {
+                        await _repository.CreateAsync(new FilterActivity
+                        {
+                            Id = issue.NodeId,
+                            WasProfane = true,
+                            Type = ActivityType.Issue,
+                            MutationOrNodeId = clientId,
+                            WorkedOn = DateTime.Now
+                        });
+                    }
+                    else
+                    {
+                        activity.WasProfane = true;
+                        activity.WorkedOn = DateTime.Now;
+                        await _repository.UpdateAsync(activity);
+                    }
+
+                    await _client.AddReactionAsync(issue.NodeId, ReactionContent.Confused, clientId);
+                    await _client.AddLabelAsync(issue.NodeId, new[] { _options.ProfaneLabelId }, clientId);
                 }
             }
             catch (Exception ex)
