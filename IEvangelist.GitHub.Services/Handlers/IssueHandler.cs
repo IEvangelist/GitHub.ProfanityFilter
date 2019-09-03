@@ -11,7 +11,6 @@ using Microsoft.Extensions.Options;
 using Octokit;
 using Octokit.GraphQL.Model;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace IEvangelist.GitHub.Services.Handlers
@@ -91,7 +90,14 @@ namespace IEvangelist.GitHub.Services.Handlers
             try
             {
                 var issue = payload.Issue;
-                var filterRresult = HandleFiltering(issue.Title, issue.Body, _profanityFilter);
+                var (title, body) = (issue.Title, issue.Body);
+                var wasJustOpened = activity is null;
+                if (!wasJustOpened)
+                {
+                    (title, body) = await _client.GetIssueTitleAndBodyAsync(issue.Number);
+                }
+                
+                var filterRresult = HandleFiltering(title, body, _profanityFilter);
                 if (filterRresult.IsFiltered)
                 {
                     var updateIssue = issue.ToUpdate();
@@ -100,7 +106,7 @@ namespace IEvangelist.GitHub.Services.Handlers
                     await _client.UpdateIssueAsync(issue.Number, updateIssue);
 
                     var clientId = Guid.NewGuid().ToString();
-                    if (activity is null)
+                    if (wasJustOpened)
                     {
                         await _repository.CreateAsync(new FilterActivity
                         {

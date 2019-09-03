@@ -156,5 +156,39 @@ namespace IEvangelist.GitHub.Services.GraphQL
             var result = await _client.PullRequest.Update(_config.Owner, _config.Repo, number, input);
             return result.NodeId;
         }
+
+        public async ValueTask<(string, string)> GetIssueTitleAndBodyAsync(int issueNumber)
+        {
+            var query =
+                new Query()
+                    .Repository(_config.Repo, _config.Owner)
+                    .Issue(issueNumber)
+                    .Select(issue => new
+                    {
+                        issue.Title,
+                        issue.Body
+                    })
+                    .Compile();
+
+            var result = await _connection.Run(query);
+            return (result.Title, result.Body);
+        }
+
+        public async ValueTask<(string, string)> GetPullRequestTitleAndBodyAsync(int pullRequestNumber)
+        {
+            var query =
+                new Query()
+                    .Repository(_config.Repo, _config.Owner)
+                    .PullRequest(pullRequestNumber)
+                    .Select(pullRequest => new
+                    {
+                        pullRequest.Title,
+                        pullRequest.Body
+                    })
+                    .Compile();
+
+            var result = await _connection.Run(query);
+            return (result.Title, result.Body);
+        }
     }
 }
