@@ -20,6 +20,7 @@ namespace IEvangelist.GitHub.Services.Filters
             ":baby:",
             ":baby_bottle:",
             ":warning:",
+            ":revolving_hearts:",
             ":see_no_evil:",
             ":snowflake:",
             ":zap:",
@@ -28,13 +29,17 @@ namespace IEvangelist.GitHub.Services.Filters
             ":monkey:",
             ":bug:",
             ":rose:",
+            ":sparkles:",
+            ":heartpulse:",
             ":cry:",
             ":floppy_disk:",
+            ":question:",
             ":speak_no_evil:",
             ":tada:",
             ":crying_cat_face:",
             ":rage2:",
             ":ok:",
+            ":sparkling_heart:",
             ":love_letter:",
             ":scream:",
             ":gift_heart:",
@@ -65,6 +70,7 @@ namespace IEvangelist.GitHub.Services.Filters
             ":baby_chick:",
             ":frog:",
             ":dog:",
+            ":neckbeard:",
             ":cyclone:"
         };
     }
