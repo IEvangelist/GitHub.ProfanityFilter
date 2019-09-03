@@ -53,7 +53,7 @@ namespace IEvangelist.GitHub.Services.Handlers
                         var activity = await _repository.GetAsync(payload.Issue.NodeId);
                         if (activity?.WorkedOn.Subtract(DateTime.Now).TotalSeconds <= 1)
                         {
-                            _logger.LogInformation("We just worked on this item...");
+                            _logger.LogInformation($"Just worked on this issue {payload.Issue.NodeId}...");
                         }
 
                         await HandleIssueAsync(payload, activity);

@@ -1,7 +1,10 @@
-﻿using IEvangelist.GitHub.Services.Extensions;
+﻿using IEvangelist.GitHub.Repository;
+using IEvangelist.GitHub.Services.Enums;
+using IEvangelist.GitHub.Services.Extensions;
 using IEvangelist.GitHub.Services.Filters;
 using IEvangelist.GitHub.Services.GraphQL;
 using IEvangelist.GitHub.Services.Hanlders;
+using IEvangelist.GitHub.Services.Models;
 using IEvangelist.GitHub.Services.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -16,14 +19,16 @@ namespace IEvangelist.GitHub.Services.Handlers
     {
         readonly IProfanityFilter _profanityFilter;
         readonly GitHubOptions _options;
+        readonly IRepository<FilterActivity> _repository;
 
         public PullRequestHandler(
             IGitHubGraphQLClient client,
             ILogger<PullRequestHandler> logger,
             IOptions<GitHubOptions> options,
-            IProfanityFilter profanityFilter)
+            IProfanityFilter profanityFilter,
+            IRepository<FilterActivity> repository)
             : base(client, logger) =>
-            (_profanityFilter, _options) = (profanityFilter, options.Value);
+            (_profanityFilter, _options, _repository) = (profanityFilter, options.Value, repository);
 
         public async ValueTask HandlePullRequestAsync(string payloadJson)
         {
@@ -49,8 +54,17 @@ namespace IEvangelist.GitHub.Services.Handlers
                         break;
 
                     case "opened":
-                    case "edited":
                         await HandlePullRequestAsync(payload);
+                        break;
+
+                    case "edited":
+                        var activity = await _repository.GetAsync(payload.PullRequest.NodeId);
+                        if (activity?.WorkedOn.Subtract(DateTime.Now).TotalSeconds <= 1)
+                        {
+                            _logger.LogInformation($"Just worked on this pull request {payload.PullRequest.NodeId}...");
+                        }
+
+                        await HandlePullRequestAsync(payload, activity);
                         break;
 
                     case "closed":
@@ -67,36 +81,53 @@ namespace IEvangelist.GitHub.Services.Handlers
             }
         }
 
-        async ValueTask HandlePullRequestAsync(PullRequestEventPayload payload)
+        async ValueTask HandlePullRequestAsync(PullRequestEventPayload payload, FilterActivity activity = null)
         {
             try
             {
                 var pullRequest = payload.PullRequest;
-                var clientId = Guid.NewGuid().ToString();
-
-                var (replaceTitle, replaceBody) =
-                    (_profanityFilter.IsProfane(pullRequest.Title), _profanityFilter.IsProfane(pullRequest.Body));
-
-                if (replaceTitle || replaceBody)
+                var (title, body) = (pullRequest.Title, pullRequest.Body);
+                var wasJustOpened = activity is null;
+                if (!wasJustOpened)
                 {
-                    var title = replaceTitle ? _profanityFilter.ApplyFilter(pullRequest.Title, '*') : pullRequest.Title;
-                    var body = replaceBody ? _profanityFilter.ApplyFilter(pullRequest.Body) : pullRequest.Body;
+                    (title, body) = await _client.GetPullRequestTitleAndBodyAsync(pullRequest.Number);
+                }
 
-                    if (replaceTitle) _logger.LogInformation($"Replaced title: {title}");
-                    if (replaceBody) _logger.LogInformation($"Replaced body: {body}");
-
+                var filterRresult = HandleFiltering(title, body, _profanityFilter);
+                if (filterRresult.IsFiltered)
+                {
                     await _client.UpdatePullRequestAsync(pullRequest.Number, new PullRequestUpdate
                     {
                         Title = title,
                         Body = body
                     });
+
+                    var clientId = Guid.NewGuid().ToString();
+                    if (wasJustOpened)
+                    {
+                        await _repository.CreateAsync(new FilterActivity
+                        {
+                            Id = pullRequest.NodeId,
+                            WasProfane = true,
+                            Type = ActivityType.Issue,
+                            MutationOrNodeId = clientId,
+                            WorkedOn = DateTime.Now
+                        });
+                    }
+                    else
+                    {
+                        activity.WasProfane = true;
+                        activity.WorkedOn = DateTime.Now;
+                        await _repository.UpdateAsync(activity);
+                    }
+
                     await _client.AddReactionAsync(pullRequest.NodeId, ReactionContent.Confused, clientId);
                     await _client.AddLabelAsync(pullRequest.NodeId, new[] { _options.ProfaneLabelId }, clientId);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error while attempting to filter pull request: {ex.Message}\n{ex.StackTrace}", ex);
+                _logger.LogError($"Error while attempting to filter issue: {ex.Message}\n{ex.StackTrace}", ex);
             }
         }
     }
