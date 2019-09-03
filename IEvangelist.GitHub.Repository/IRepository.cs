@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace IEvangelist.GitHub.Repository
 {
-    public interface IRepository<T>
+    public interface IRepository<T> where T : BaseDocument
     {
         ValueTask<T> GetAsync(string id);
 

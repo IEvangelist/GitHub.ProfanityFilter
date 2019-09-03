@@ -1,4 +1,5 @@
-﻿using IEvangelist.GitHub.Services.Filters;
+﻿using IEvangelist.GitHub.Repository.Extensions;
+using IEvangelist.GitHub.Services.Filters;
 using IEvangelist.GitHub.Services.GraphQL;
 using IEvangelist.GitHub.Services.Handlers;
 using IEvangelist.GitHub.Services.Options;
@@ -20,6 +21,7 @@ namespace IEvangelist.GitHub.Services.Extensions
                     .AddTransient<IIssueHandler, IssueHandler>()
                     .AddTransient<IPullRequestHandler, PullRequestHandler>()
                     .AddTransient<IGitHubWebhookDispatcher, GitHubWebhookDispatcher>()
-                    .AddSingleton<IProfanityFilter, ProfanityFilter>();
+                    .AddSingleton<IProfanityFilter, ProfanityFilter>()
+                    .AddGitHubRepository(configuration);
     }
 }

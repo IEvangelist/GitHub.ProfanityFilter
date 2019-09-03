@@ -32,7 +32,7 @@ namespace IEvangelist.GitHub.Webhooks.Validators
         {
             var length = Math.Min(a.Length, b.Length);
             var equals = a.Length == b.Length;
-            for (var i = 0; i < length; ++i)
+            for (var i = 0; i < length; ++ i)
             {
                 equals &= a[i] == b[i];
             }

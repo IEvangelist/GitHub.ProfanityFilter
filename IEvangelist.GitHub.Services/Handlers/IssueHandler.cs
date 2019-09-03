@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Octokit;
 using Octokit.GraphQL.Model;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace IEvangelist.GitHub.Services.Handlers

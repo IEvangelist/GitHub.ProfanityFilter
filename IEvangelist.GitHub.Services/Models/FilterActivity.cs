@@ -1,12 +1,12 @@
-﻿using IEvangelist.GitHub.Services.Enums;
+﻿using IEvangelist.GitHub.Repository;
+using IEvangelist.GitHub.Services.Enums;
+using Newtonsoft.Json;
 using System;
 
 namespace IEvangelist.GitHub.Services.Models
 {
-    public class FilterActivity
+    public class FilterActivity : BaseDocument
     {
-        public string Id { get; set; }
-
         public string MutationOrNodeId { get; set; }
         
         public ActivityType Type { get; set; }
