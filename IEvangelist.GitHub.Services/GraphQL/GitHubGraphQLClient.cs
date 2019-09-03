@@ -157,7 +157,7 @@ namespace IEvangelist.GitHub.Services.GraphQL
             return result.NodeId;
         }
 
-        public async ValueTask<(string, string)> GetIssueTitleAndBodyAsync(int issueNumber)
+        public async ValueTask<(string title, string body)> GetIssueTitleAndBodyAsync(int issueNumber)
         {
             var query =
                 new Query()
@@ -174,7 +174,7 @@ namespace IEvangelist.GitHub.Services.GraphQL
             return (result.Title, result.Body);
         }
 
-        public async ValueTask<(string, string)> GetPullRequestTitleAndBodyAsync(int pullRequestNumber)
+        public async ValueTask<(string title, string body)> GetPullRequestTitleAndBodyAsync(int pullRequestNumber)
         {
             var query =
                 new Query()

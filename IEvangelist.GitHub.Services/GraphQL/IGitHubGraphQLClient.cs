@@ -22,8 +22,8 @@ namespace IEvangelist.GitHub.Services.GraphQL
 
         ValueTask<string> UpdatePullRequestAsync(int number, PullRequestUpdate input);
 
-        ValueTask<(string, string)> GetIssueTitleAndBodyAsync(int issueNumber);
+        ValueTask<(string title, string body)> GetIssueTitleAndBodyAsync(int issueNumber);
 
-        ValueTask<(string, string)> GetPullRequestTitleAndBodyAsync(int pullRequestNumber);
+        ValueTask<(string title, string body)> GetPullRequestTitleAndBodyAsync(int pullRequestNumber);
     }
 }
