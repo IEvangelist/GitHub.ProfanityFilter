@@ -23,7 +23,7 @@ namespace IEvangelist.GitHub.Services.Hanlders
             var filterTitle = filter?.IsProfane(title) ?? false;
             var filterBody = filter?.IsProfane(body) ?? false;
 
-            var resultingTitle = filterTitle ? filter?.ApplyFilter(title) : title;
+            var resultingTitle = filterTitle ? filter?.ApplyFilter(title, '*') : title;
             var resultingBody = filterBody ? filter?.ApplyFilter(body) : body;
 
             if (filterTitle)

@@ -47,7 +47,7 @@ namespace IEvangelist.GitHub.Services.Handlers
                 switch (payload.Action)
                 {
                     case "opened":
-                        await HandleIssueAsync(payload, null);
+                        await HandleIssueAsync(payload);
                         break;
 
                     case "edited":
