@@ -56,7 +56,7 @@ namespace IEvangelist.GitHub.Services.Filters
             ":disappointed:",
             ":baby_bottle:",
             ":confounded:",
-            ":broken_heart",
+            ":broken_heart:",
             ":exclamation:",
             ":boom:",
             ":fire:",
