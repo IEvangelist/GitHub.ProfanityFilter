@@ -17,14 +17,12 @@ namespace IEvangelist.GitHub.Services
         }
 
         public ValueTask DispatchAsync(string eventName, string payloadJson)
-        {
-            switch (eventName)
+            => eventName switch
             {
-                case "issues": return _issueHandler.HandleIssueAsync(payloadJson);
-                case "pull_request": return _pullRequestHandler.HandlePullRequestAsync(payloadJson);
+                "issues" => _issueHandler.HandleIssueAsync(payloadJson),
+                "pull_request" => _pullRequestHandler.HandlePullRequestAsync(payloadJson),
 
-                default: return new ValueTask();
-            }
-        }
+                _ => new ValueTask(),
+            };
     }
 }
