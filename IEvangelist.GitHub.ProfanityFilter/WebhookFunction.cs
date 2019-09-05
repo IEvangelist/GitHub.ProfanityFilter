@@ -26,12 +26,8 @@ namespace IEvangelist.GitHub.ProfanityFilter
         public WebhookFunction(
             IGitHubPayloadValidator payloadValidator,
             IGitHubWebhookDispatcher webhookDispatcher,
-            ILogger<WebhookFunction> logger)
-        {
-            _payloadValidator = payloadValidator;
-            _webhookDispatcher = webhookDispatcher;
-            _logger = logger;
-        }
+            ILogger<WebhookFunction> logger) =>
+            (_payloadValidator, _webhookDispatcher, _logger) = (payloadValidator, webhookDispatcher, logger);
 
         [FunctionName("ProcessWebhook")]
         public async Task<IActionResult> Run(
@@ -49,10 +45,12 @@ namespace IEvangelist.GitHub.ProfanityFilter
                 var payloadJson = await reader.ReadToEndAsync();
                 _logger.LogInformation(payloadJson);
 
-                var payloadBytes = Encoding.UTF8.GetBytes(payloadJson);
-                if (!_payloadValidator.IsPayloadSignatureValid(payloadBytes, signature))
+                if (!_payloadValidator.IsPayloadSignatureValid(
+                    Encoding.UTF8.GetBytes(payloadJson),
+                    signature))
                 {
-                    _logger.LogWarning("Invalid GitHub webhook signature!");
+                    _logger.LogError("Invalid GitHub webhook signature!");
+                    return new StatusCodeResult(500);
                 }
 
                 var eventName = request.Headers.GetValueOrDefault(EventHeader);
@@ -61,7 +59,7 @@ namespace IEvangelist.GitHub.ProfanityFilter
 
                 await _webhookDispatcher.DispatchAsync(eventName, payloadJson);
 
-                return new OkObjectResult("Successfully handled the invocation of the webhook endpoint.");
+                return new OkObjectResult($"Successfully handled the {eventName} event.");
             }
             catch (Exception ex)
             {
