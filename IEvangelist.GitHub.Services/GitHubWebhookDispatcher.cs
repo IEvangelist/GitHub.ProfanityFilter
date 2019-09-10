@@ -5,6 +5,8 @@ namespace IEvangelist.GitHub.Services
 {
     public class GitHubWebhookDispatcher : IGitHubWebhookDispatcher
     {
+        static readonly ValueTask NoopTask = new ValueTask();
+
         readonly IIssueHandler _issueHandler;
         readonly IPullRequestHandler _pullRequestHandler;
 
@@ -22,7 +24,7 @@ namespace IEvangelist.GitHub.Services
                 "issues" => _issueHandler.HandleIssueAsync(payloadJson),
                 "pull_request" => _pullRequestHandler.HandlePullRequestAsync(payloadJson),
 
-                _ => new ValueTask(),
+                _ => NoopTask,
             };
     }
 }
