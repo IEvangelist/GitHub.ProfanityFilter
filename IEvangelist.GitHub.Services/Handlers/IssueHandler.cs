@@ -97,12 +97,12 @@ namespace IEvangelist.GitHub.Services.Handlers
                     (title, body) = await _client.GetIssueTitleAndBodyAsync(issue.Number);
                 }
 
-                var filterRresult = HandleFiltering(title, body, _profanityFilter);
-                if (filterRresult.IsFiltered)
+                var filterResult = ApplyProfanityFilter(title, body, _profanityFilter);
+                if (filterResult.IsFiltered)
                 {
                     var updateIssue = issue.ToUpdate();
-                    updateIssue.Title = filterRresult.Title;
-                    updateIssue.Body = filterRresult.Body;
+                    updateIssue.Title = filterResult.Title;
+                    updateIssue.Body = filterResult.Body;
                     await _client.UpdateIssueAsync(issue.Number, updateIssue);
 
                     var clientId = Guid.NewGuid().ToString();

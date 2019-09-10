@@ -94,8 +94,8 @@ namespace IEvangelist.GitHub.Services.Handlers
                     (title, body) = await _client.GetPullRequestTitleAndBodyAsync(pullRequest.Number);
                 }
 
-                var filterRresult = HandleFiltering(title, body, _profanityFilter);
-                if (filterRresult.IsFiltered)
+                var filterResult = ApplyProfanityFilter(title, body, _profanityFilter);
+                if (filterResult.IsFiltered)
                 {
                     await _client.UpdatePullRequestAsync(pullRequest.Number, new PullRequestUpdate
                     {

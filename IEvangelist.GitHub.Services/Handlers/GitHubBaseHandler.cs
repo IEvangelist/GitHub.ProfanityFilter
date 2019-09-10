@@ -13,7 +13,7 @@ namespace IEvangelist.GitHub.Services.Hanlders
         public GitHubBaseHandler(IGitHubGraphQLClient client, ILogger<T> logger) =>
             (_client, _logger) = (client, logger);
 
-        internal FilterResult HandleFiltering(string title, string body, IProfanityFilter filter)
+        internal FilterResult ApplyProfanityFilter(string title, string body, IProfanityFilter filter)
         {
             if (string.IsNullOrWhiteSpace(title) && string.IsNullOrWhiteSpace(body))
             {
