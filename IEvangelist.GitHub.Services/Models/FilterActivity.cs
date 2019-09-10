@@ -14,5 +14,13 @@ namespace IEvangelist.GitHub.Services.Models
         public DateTime WorkedOn { get; set; }
 
         public bool WasProfane { get; set; }
+
+        public string OriginalTitleText { get; set; }
+
+        public string ModifiedTitleText { get; set; }
+
+        public string OriginalBodyText { get; set; }
+
+        public string ModifiedBodyText { get; set; }
     }
 }

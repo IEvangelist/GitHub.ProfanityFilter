@@ -112,7 +112,11 @@ namespace IEvangelist.GitHub.Services.Handlers
                             WasProfane = true,
                             Type = ActivityType.Issue,
                             MutationOrNodeId = clientId,
-                            WorkedOn = DateTime.Now
+                            WorkedOn = DateTime.Now,
+                            OriginalTitleText = title,
+                            OriginalBodyText = body,
+                            ModifiedTitleText = filterResult.Title,
+                            ModifiedBodyText = filterResult.Body
                         });
                     }
                     else
