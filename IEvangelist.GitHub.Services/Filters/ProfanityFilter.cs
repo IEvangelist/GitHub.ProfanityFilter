@@ -1,11 +1,15 @@
-﻿using IEvangelist.GitHub.Services.Extensions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace IEvangelist.GitHub.Services.Filters
 {
     public class ProfanityFilter : IProfanityFilter
     {
+        readonly IWordReplacer _wordReplacer;
+
+        public ProfanityFilter(IWordReplacer wordReplacer) => 
+            _wordReplacer = wordReplacer;
+
         public bool IsProfane(string content) =>
             string.IsNullOrWhiteSpace(content)
                 ? false
@@ -23,20 +27,14 @@ namespace IEvangelist.GitHub.Services.Filters
                        .Select(word => (isProfane: IsProfane(word), word))
                        .ToList();
 
-            var profaneCount = words.Count(_ => _.isProfane);
-            var replacementQueue = 
-                new Queue<string>(
-                    GitHubEmoji.ProfaneReplacements
-                               .GetRandomElements(profaneCount));
-
             return string.Join(
                 " ",
-                words.Select(_ => _.isProfane ? GetReplacement(_.word, replacementQueue, placeHolder) : _.word));
+                words.Select(_ => _.isProfane ? GetReplacement(_.word, null, placeHolder) : _.word));
         }
 
-        static string GetReplacement(string word, Queue<string> replacements, char? placeHolder = null) =>
+        string GetReplacement(string word, Queue<string> replacements, char? placeHolder = null) =>
             placeHolder.HasValue
                 ? new string(placeHolder.Value, word.Length)
-                : replacements.Dequeue();
+                : _wordReplacer.ReplaceWord(word);
     }
 }

@@ -22,6 +22,7 @@ namespace IEvangelist.GitHub.Services.Extensions
                     .AddTransient<IPullRequestHandler, PullRequestHandler>()
                     .AddTransient<IGitHubWebhookDispatcher, GitHubWebhookDispatcher>()
                     .AddSingleton<IProfanityFilter, ProfanityFilter>()
+                    .AddSingleton<IWordReplacer, GitHubEmojiWordReplacer>()
                     .AddGitHubRepository(configuration);
     }
 }
