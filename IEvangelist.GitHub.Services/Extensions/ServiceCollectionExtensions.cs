@@ -3,6 +3,7 @@ using IEvangelist.GitHub.Services.Filters;
 using IEvangelist.GitHub.Services.GraphQL;
 using IEvangelist.GitHub.Services.Handlers;
 using IEvangelist.GitHub.Services.Options;
+using IEvangelist.GitHub.Services.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,12 +18,14 @@ namespace IEvangelist.GitHub.Services.Extensions
             services.AddLogging(logging => logging.AddFilter(level => true))
                     .AddOptions()
                     .Configure<GitHubOptions>(configuration.GetSection(nameof(GitHubOptions)))
-                    .AddTransient<IGitHubGraphQLClient, GitHubGraphQLClient>()
-                    .AddTransient<IIssueHandler, IssueHandler>()
-                    .AddTransient<IPullRequestHandler, PullRequestHandler>()
-                    .AddTransient<IGitHubWebhookDispatcher, GitHubWebhookDispatcher>()
+                    .AddSingleton<IGitHubGraphQLClient, GitHubGraphQLClient>()
+                    .AddSingleton<IIssueHandler, IssueHandler>()
+                    .AddSingleton<IPullRequestHandler, PullRequestHandler>()
+                    .AddSingleton<IGitHubWebhookDispatcher, GitHubWebhookDispatcher>()
                     .AddSingleton<IProfanityFilter, ProfanityFilter>()
+                    .AddSingleton<IWordReplacerProvider, WordReplacerProvider>()
                     .AddSingleton<IWordReplacer, GitHubEmojiWordReplacer>()
+                    .AddSingleton<IWordReplacer, LintLickerWordReplacer>()
                     .AddGitHubRepository(configuration);
     }
 }

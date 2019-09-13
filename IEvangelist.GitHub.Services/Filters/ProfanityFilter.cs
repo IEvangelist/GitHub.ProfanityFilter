@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using IEvangelist.GitHub.Services.Providers;
 using System.Linq;
 
 namespace IEvangelist.GitHub.Services.Filters
@@ -7,8 +7,8 @@ namespace IEvangelist.GitHub.Services.Filters
     {
         readonly IWordReplacer _wordReplacer;
 
-        public ProfanityFilter(IWordReplacer wordReplacer) => 
-            _wordReplacer = wordReplacer;
+        public ProfanityFilter(IWordReplacerProvider provider) => 
+            _wordReplacer = provider.GetWordReplacer();
 
         public bool IsProfane(string content) =>
             string.IsNullOrWhiteSpace(content)
@@ -29,10 +29,10 @@ namespace IEvangelist.GitHub.Services.Filters
 
             return string.Join(
                 " ",
-                words.Select(_ => _.isProfane ? GetReplacement(_.word, null, placeHolder) : _.word));
+                words.Select(_ => _.isProfane ? GetReplacement(_.word, placeHolder) : _.word));
         }
 
-        string GetReplacement(string word, Queue<string> replacements, char? placeHolder = null) =>
+        string GetReplacement(string word, char? placeHolder = null) =>
             placeHolder.HasValue
                 ? new string(placeHolder.Value, word.Length)
                 : _wordReplacer.ReplaceWord(word);

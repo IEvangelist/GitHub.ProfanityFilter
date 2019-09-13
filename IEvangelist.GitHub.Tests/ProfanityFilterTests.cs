@@ -1,4 +1,7 @@
 using IEvangelist.GitHub.Services.Filters;
+using IEvangelist.GitHub.Services.Options;
+using IEvangelist.GitHub.Services.Providers;
+using Microsoft.Extensions.Options;
 using System;
 using Xunit;
 
@@ -6,7 +9,15 @@ namespace IEvangelist.GitHub.Tests
 {
     public class ProfanityFilterTests
     {
-        readonly IProfanityFilter _sut = new ProfanityFilter(new LintLickerWordReplacer());
+        readonly IProfanityFilter _sut = 
+            new ProfanityFilter(
+                new WordReplacerProvider(
+                    new IWordReplacer[] 
+                    {
+                        new GitHubEmojiWordReplacer(),
+                        new LintLickerWordReplacer() 
+                    },
+                    Options.Create(new GitHubOptions())));
 
         [Fact]
         public void CorrectlyReplacesSimpleTextProfanity()
