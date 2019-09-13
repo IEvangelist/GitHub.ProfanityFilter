@@ -75,9 +75,6 @@ namespace IEvangelist.GitHub.Services.Filters
             ":cyclone:"
         };
 
-        public string ReplaceWord(string word)
-        {
-            return Emoji.GetRandomElement();
-        }
+        public string ReplaceWord(string word) => Emoji.GetRandomElement();
     }
 }

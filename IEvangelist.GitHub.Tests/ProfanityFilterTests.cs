@@ -6,7 +6,7 @@ namespace IEvangelist.GitHub.Tests
 {
     public class ProfanityFilterTests
     {
-        readonly IProfanityFilter _sut = new ProfanityFilter(new GitHubEmojiWordReplacer());
+        readonly IProfanityFilter _sut = new ProfanityFilter(new LintLickerWordReplacer());
 
         [Fact]
         public void CorrectlyReplacesSimpleTextProfanity()
