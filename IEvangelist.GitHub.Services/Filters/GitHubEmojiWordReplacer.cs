@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using IEvangelist.GitHub.Services.Extensions;
+using System.Collections.Generic;
 
 namespace IEvangelist.GitHub.Services.Filters
 {
-    static class GitHubEmoji
+    public class GitHubEmojiWordReplacer : IWordReplacer
     {
         // Borrowed from: https://www.webfx.com/tools/emoji-cheat-sheet/
-        internal static ISet<string> ProfaneReplacements { get; } = new HashSet<string>
+        internal static ISet<string> Emoji { get; } = new HashSet<string>
         {
             ":rage:",
             ":boom:",
@@ -73,5 +74,7 @@ namespace IEvangelist.GitHub.Services.Filters
             ":neckbeard:",
             ":cyclone:"
         };
+
+        public string ReplaceWord(string word) => Emoji.GetRandomElement();
     }
 }
