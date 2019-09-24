@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29209.152
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IEvangelist.GitHub.Webhooks", "IEvangelist.GitHub.ProfanityFilter\IEvangelist.GitHub.Webhooks.csproj", "{8647BA85-06DC-47D2-8806-2A4CE43F3796}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IEvangelist.GitHub.Webhooks", "IEvangelist.GitHub.Webhooks\IEvangelist.GitHub.Webhooks.csproj", "{8647BA85-06DC-47D2-8806-2A4CE43F3796}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IEvangelist.GitHub.Services", "IEvangelist.GitHub.Services\IEvangelist.GitHub.Services.csproj", "{9C39BF96-BA63-45D2-B615-B0D3C19554F4}"
 EndProject
