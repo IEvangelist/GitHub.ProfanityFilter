@@ -1,5 +1,5 @@
 ﻿# @css[az](WTF) @color[grey](GitHub)
-### ... don't take me @color[orange](so seriously)
+## ... don't take me @color[orange](so seriously)
 
 ---
 
@@ -51,7 +51,7 @@
 ---
 
 # GitHub @color[grey](@fab[github])
-## @color[green](Webhooks)
+# @color[green](Webhooks)
 
 ---
 
@@ -102,7 +102,7 @@ static bool IsSignatureValid(
 ```
 
 @snap[south span-100]
-@[1-3](A `bool` return, parameters two `string` instances to compare)
+@[1-3](A `bool` return, two `string` parameters)
 @[5](Determine the shortest `length`)
 @[6](Declare and assign `equals`)
 @[7-12](Compare each `char` in both `string` instances for equality)
@@ -110,8 +110,35 @@ static bool IsSignatureValid(
 
 ---
 
+```cs zoom-13
+public ValueTask DispatchAsync(
+	string eventName,
+	string payloadJson) => 
+	eventName switch
+    {
+        "issues" => 
+			_issueHandler.HandleIssueAsync(
+				payloadJson),
+        "pull_request" => 
+			_pullHandler.HandlePullRequestAsync(
+				payloadJson),
+
+        _ => new ValueTask(),
+    };
+```
+
+@snap[south span-100]
+@[1-3](A `ValueTask` return, `eventName` and JSON parameters)
+@[4-5,14](C# 8, `switch` expressions)
+@[6-8](Handle `issues`)
+@[9-11](Handle `pull requests`)
+@[13](Handle `default` case, "catch-all")
+@snapend
+
+---
+
 # GitHub @color[grey](@fab[github])
-## @color[red](Labels)
+# @color[red](Labels)
 
 ---
 
@@ -120,7 +147,7 @@ static bool IsSignatureValid(
 ---
 
 # GitHub @color[grey](@fab[github])
-## @color[magenta](GraphQL)
+# @color[magenta](GraphQL)
 
 ---
 
