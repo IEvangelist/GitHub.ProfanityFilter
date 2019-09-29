@@ -1,5 +1,5 @@
 ﻿# @css[az](WTF) @color[grey](GitHub)
-## ... don't take me @color[orange](so seriously)
+## ... don't take me<br>@color[orange](so seriously)
 
 ---
 
@@ -47,7 +47,6 @@
 ### #DeveloperCommunity @css[twitter](@fa[twitter])
 
 ---?image=profanity-filter.png&size=contain
----?image=assets/slide-one.png&size=contain
 ---
 
 # GitHub @color[grey](@fab[github])
@@ -60,16 +59,12 @@ public bool IsPayloadSignatureValid(
 	byte[] bytes, 
 	string receivedSignature)
 {
-    if (string.IsNullOrWhiteSpace(receivedSignature))
-    {
-        return false;
-    }
-
     using var hmac = new HMACSHA1(
-		Encoding.ASCII.GetBytes(_options.WebhookSecret));
+		_options.WebhookSecret.ToByteArray());
 
     var hash = hmac.ComputeHash(bytes);
-    var actualSignature = $"sha1={hash.ToHexString()}";
+    var actualSignature =
+		$"sha1={hash.ToHexString()}";
 
     return IsSignatureValid(
 		actualSignature, receivedSignature);
@@ -77,15 +72,14 @@ public bool IsPayloadSignatureValid(
 ```
 
 @snap[south span-100]
-@[1-3](Method signature, `bool` return, parameters `byte[]` and signature)
-@[5-8](Early exit)
-@[10-11](C# 8, simplified `using`)
-@[13-17](Compute the hash and call `IsSignatureValid`)
+@[1-3, zoom-12](Method signature, `bool` return, parameters `byte[]` and signature)
+@[5-6, zoom-12](C# 8, simplified `using`)
+@[8-13, zoom-12](Compute the hash and call `IsSignatureValid`)
 @snapend
 
 ---
 
-```cs zoom-14
+```cs zoom-12
 static bool IsSignatureValid(
 	string a,
 	string b)
@@ -102,15 +96,15 @@ static bool IsSignatureValid(
 ```
 
 @snap[south span-100]
-@[1-3](A `bool` return, two `string` parameters)
-@[5](Determine the shortest `length`)
-@[6](Declare and assign `equals`)
-@[7-12](Compare each `char` in both `string` instances for equality)
+@[1-3, zoom-12](A `bool` return, two `string` parameters)
+@[5, zoom-12](Determine the shortest `length`)
+@[6, zoom-12](Declare and assign `equals`)
+@[7-12, zoom-12](Compare each `char` in both `string` instances for equality)
 @snapend
 
 ---
 
-```cs zoom-13
+```cs zoom-11
 public ValueTask DispatchAsync(
 	string eventName,
 	string payloadJson) => 
@@ -128,11 +122,11 @@ public ValueTask DispatchAsync(
 ```
 
 @snap[south span-100]
-@[1-3](A `ValueTask` return, `eventName` and JSON parameters)
-@[4-5,14](C# 8, `switch` expressions)
-@[6-8](Handle `issues`)
-@[9-11](Handle `pull requests`)
-@[13](Handle `default` case, "catch-all")
+@[1-3, zoom-14](A `ValueTask` return, `eventName` and JSON parameters)
+@[4-5,14, zoom-14](C# 8, `switch` expressions)
+@[6-8, zoom-13](Handle `issues`)
+@[9-11, zoom-12](Handle `pull requests`)
+@[13, zoom-14](Handle `default` case, "catch-all")
 @snapend
 
 ---
@@ -142,7 +136,7 @@ public ValueTask DispatchAsync(
 
 ---
 
-## [Labels @fa[external-link-alt]](https://github.com/IEvangelist/GitHub.ProfanityFilter/labels)
+# [Labels @fa[external-link-alt]](https://github.com/IEvangelist/GitHub.ProfanityFilter/labels)
 
 ---
 
@@ -151,30 +145,17 @@ public ValueTask DispatchAsync(
 
 ---
 
-```js zoom-17
-query {
-  repository(
-    owner: "IEvangelist", 
-    name: "GitHub.ProfanityFilter") {
-    labels(first: 20) {
-      nodes { id, name }
-    }
-  }
-}
-```
+# [GraphQL @fa[external-link-alt]](https://developer.github.com/v4/explorer/)
 
-@snap[south span-100]
-@[1](We start with a `query` or a `mutation`)
-@[2-8](We're going to `query` a `repository`)
-@[3-4](Given a `name` and `owner`)
-@[5](Select the `first` 20 `labels`)
-@[6](Take the `id` and `name` from the `nodes`)
-@snapend
+---
+
+# @color[cyan](`{`) @color[magenta](` demo `) @color[cyan](`}`)
 
 ---
 
 ![Lint Licker](https://www.youtube.com/embed/sf4VC-xNsP8)
 
+---?image=assets/slide-one.png&size=contain
 ---
 
 # @color[grey](@fab[github]) Source @color[cyan](@fa[code])
