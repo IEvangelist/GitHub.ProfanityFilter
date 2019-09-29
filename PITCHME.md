@@ -124,10 +124,22 @@ public ValueTask DispatchAsync(
 @snap[south span-100]
 @[1-3, zoom-14](A `ValueTask` return, `eventName` and JSON parameters)
 @[4-5,14, zoom-14](C# 8, `switch` expressions)
-@[6-8, zoom-13](Handle `issues`)
-@[9-11, zoom-12](Handle `pull requests`)
-@[13, zoom-14](Handle `default` case, "catch-all")
+@[4-5,14,6-8, zoom-12](Handle `issues`)
+@[4-5,14,9-11, zoom-12](Handle `pull requests`)
+@[4-5,14,13, zoom-12](Handle `default` case, "catch-all")
 @snapend
+
+---
+
+## @color[magenta](Issue) Handler
+
+@ul[no-bullets text-14]
+
+ - @color[cyan](@fa[filter]) &nbsp; Conditionally Apply Filtering
+ - @color[red](@fa[clock-o]) &nbsp; Add 😕 Reaction
+ - @color[green](@fa[tag]) &nbsp; Add @color[lightblue]("Profane Content") Label 
+
+@ulend
 
 ---
 
@@ -149,13 +161,18 @@ public ValueTask DispatchAsync(
 
 ---
 
-# @color[cyan](`{`) @color[magenta](` demo `) @color[cyan](`}`)
+# @color[magenta](`{`) @color[cyan]( demo ) @color[magenta](`}`)
 
 ---
 
 ![Lint Licker](https://www.youtube.com/embed/sf4VC-xNsP8)
 
 ---?image=assets/slide-one.png&size=contain
+
+@snap[north-west]
+### 🔎 @color[teal](overview)
+@snapend
+
 ---
 
 # @color[grey](@fab[github]) Source @color[cyan](@fa[code])

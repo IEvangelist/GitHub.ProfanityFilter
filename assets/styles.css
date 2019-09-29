@@ -15,8 +15,12 @@ img.glow {
     filter: drop-shadow(0px 0px 5px white);
 }
 
-.clear > img,
-.clear > a > img
+
+.no-bullets {
+    list-style-type: none !important;
+}
+
+.clear > img, .clear > a > img
 {
     border: none !important;
     box-shadow: none !important;
