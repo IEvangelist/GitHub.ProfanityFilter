@@ -51,7 +51,7 @@
 ---
 
 # GitHub @color[grey](@fab[github])
-## @color[orange](Webhooks)
+## @color[green](Webhooks)
 
 ---
 
@@ -75,6 +75,14 @@ public bool IsPayloadSignatureValid(
 		actualSignature, receivedSignature);
 }
 ```
+
+@snap[south span-100]
+@[1-3](Method signature, `bool` return, parameters `byte[]` and signature)
+@[5-8](Early exit)
+@[10-11](C# 8, simplified `using`)
+@[13-17](Compute the hash and call `IsSignatureValid`)
+@snapend
+
 ---
 
 ```cs zoom-14
@@ -93,10 +101,26 @@ static bool IsSignatureValid(
 }
 ```
 
+@snap[south span-100]
+@[1-3](A `bool` return, parameters two `string` instances to compare)
+@[5](Determine the shortest `length`)
+@[6](Declare and assign `equals`)
+@[7-12](Compare each `char` in both `string` instances for equality)
+@snapend
+
 ---
 
 # GitHub @color[grey](@fab[github])
-## @color[orange](GraphQL)
+## @color[red](Labels)
+
+---
+
+## [Labels @fa[external-link-alt]](https://github.com/IEvangelist/GitHub.ProfanityFilter/labels)
+
+---
+
+# GitHub @color[grey](@fab[github])
+## @color[magenta](GraphQL)
 
 ---
 
@@ -111,6 +135,18 @@ query {
   }
 }
 ```
+
+@snap[south span-100]
+@[1](We start with a `query` or a `mutation`)
+@[2-8](We're going to `query` a `repository`)
+@[3-4](Given a `name` and `owner`)
+@[5](Select the `first` 20 `labels`)
+@[6](Take the `id` and `name` from the `nodes`)
+@snapend
+
+---
+
+![Lint Licker](https://www.youtube.com/embed/sf4VC-xNsP8)
 
 ---
 
