@@ -1,0 +1,1 @@
+docker pull gitpitch/desktop:pro

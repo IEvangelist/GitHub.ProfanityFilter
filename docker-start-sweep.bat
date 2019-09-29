@@ -1,0 +1,2 @@
+"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" http://localhost:9000
+docker run --name profanity-filter -it -v C:\Users\dapine\source\repos\IEvangelist.GitHub.ProfanityFilter:/repo -p 9000:9000 -e PORT=9000 -e SWEEP=true --rm gitpitch/desktop:pro

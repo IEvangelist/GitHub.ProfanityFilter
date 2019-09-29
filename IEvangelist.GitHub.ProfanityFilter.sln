@@ -11,13 +11,32 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IEvangelist.GitHub.Reposito
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{27837060-E9DA-46C3-840E-03CCA810AE1C}"
 	ProjectSection(SolutionItems) = preProject
+		docker-pull-latest.bat = docker-pull-latest.bat
+		docker-start-fast.bat = docker-start-fast.bat
+		docker-start-sweep.bat = docker-start-sweep.bat
+		docker-start.bat = docker-start.bat
+		docker-stop.bat = docker-stop.bat
+		PITCHME.md = PITCHME.md
+		PITCHME.yaml = PITCHME.yaml
 		profanity-filter.png = profanity-filter.png
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IEvangelist.GitHub.Sandbox", "IEvangelist.GitHub.Sandbox\IEvangelist.GitHub.Sandbox.csproj", "{3CC269A9-246D-4E4A-B44E-C0C04C163C20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IEvangelist.GitHub.Tests", "IEvangelist.GitHub.Tests\IEvangelist.GitHub.Tests.csproj", "{4C1C68CE-5B54-4179-B70F-E0173D37EBF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IEvangelist.GitHub.Tests", "IEvangelist.GitHub.Tests\IEvangelist.GitHub.Tests.csproj", "{4C1C68CE-5B54-4179-B70F-E0173D37EBF5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{A5803FF2-B14A-4601-B23E-2DD23DD8942D}"
+	ProjectSection(SolutionItems) = preProject
+		assets\azure-logo.png = assets\azure-logo.png
+		assets\creamcitycode.png = assets\creamcitycode.png
+		assets\gde.png = assets\gde.png
+		assets\me.png = assets\me.png
+		assets\mvp.png = assets\mvp.png
+		assets\slide-one.png = assets\slide-one.png
+		assets\styles.css = assets\styles.css
+		assets\twilio-mark-red.png = assets\twilio-mark-red.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +67,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A5803FF2-B14A-4601-B23E-2DD23DD8942D} = {27837060-E9DA-46C3-840E-03CCA810AE1C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9DC5B3FD-8F9A-44E7-A64F-2CCECA03558E}
