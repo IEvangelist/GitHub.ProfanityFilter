@@ -15,7 +15,8 @@ using System.Threading.Tasks;
 
 namespace IEvangelist.GitHub.Services.Handlers
 {
-    public class IssueHandler : GitHubBaseHandler<IssueHandler>, IIssueHandler
+    public class IssueHandler
+        : GitHubBaseHandler<IssueHandler>, IIssueHandler
     {
         readonly GitHubOptions _options;
         readonly IProfanityFilter _profanityFilter;
@@ -28,7 +29,8 @@ namespace IEvangelist.GitHub.Services.Handlers
             IProfanityFilter profanityFilter,
             IRepository<FilterActivity> repository)
             : base(client, logger) =>
-            (_profanityFilter, _options, _repository) = (profanityFilter, options.Value, repository);
+            (_profanityFilter, _options, _repository) = 
+                (profanityFilter, options.Value, repository);
 
         public async ValueTask HandleIssueAsync(string payloadJson)
         {
@@ -41,7 +43,8 @@ namespace IEvangelist.GitHub.Services.Handlers
                     return;
                 }
 
-                _logger.LogInformation($"Handling issue: {payload.Action}, {payload.Issue.NodeId}");
+                _logger.LogInformation(
+                    $"Handling issue: {payload.Action}, {payload.Issue.NodeId}");
 
                 switch (payload.Action)
                 {
@@ -51,10 +54,14 @@ namespace IEvangelist.GitHub.Services.Handlers
 
                     case "reopened":
                     case "edited":
-                        var activity = await _repository.GetAsync(payload.Issue.NodeId);
-                        if (activity?.WorkedOn.Subtract(DateTime.Now).TotalSeconds <= 1)
+                        var activity = 
+                            await _repository.GetAsync(payload.Issue.NodeId);
+                        if (activity?.WorkedOn
+                                    .Subtract(DateTime.Now)
+                                    .TotalSeconds <= 1)
                         {
-                            _logger.LogInformation($"Just worked on this issue {payload.Issue.NodeId}...");
+                            _logger.LogInformation(
+                                $"Just worked on this issue {payload.Issue.NodeId}...");
                         }
 
                         await HandleIssueAsync(payload, activity);
@@ -85,7 +92,9 @@ namespace IEvangelist.GitHub.Services.Handlers
             }
         }
 
-        async ValueTask HandleIssueAsync(IssueEventPayload payload, FilterActivity activity = null)
+        async ValueTask HandleIssueAsync(
+            IssueEventPayload payload,
+            FilterActivity activity = null)
         {
             try
             {
@@ -94,10 +103,12 @@ namespace IEvangelist.GitHub.Services.Handlers
                 var wasJustOpened = activity is null;
                 if (!wasJustOpened)
                 {
-                    (title, body) = await _client.GetIssueTitleAndBodyAsync(issue.Number);
+                    (title, body) = 
+                        await _client.GetIssueTitleAndBodyAsync(issue.Number);
                 }
 
-                var filterResult = ApplyProfanityFilter(title, body, _profanityFilter);
+                var filterResult = 
+                    ApplyProfanityFilter(title, body, _profanityFilter);
                 if (filterResult.IsFiltered)
                 {
                     var updateIssue = issue.ToUpdate();
@@ -128,13 +139,20 @@ namespace IEvangelist.GitHub.Services.Handlers
                         await _repository.UpdateAsync(activity);
                     }
 
-                    await _client.AddReactionAsync(issue.NodeId, ReactionContent.Confused, clientId);
-                    await _client.AddLabelAsync(issue.NodeId, new[] { _options.ProfaneLabelId }, clientId);
+                    await _client.AddReactionAsync(
+                        issue.NodeId,
+                        ReactionContent.Confused,
+                        clientId);
+                    await _client.AddLabelAsync(
+                        issue.NodeId,
+                        new[] { _options.ProfaneLabelId },
+                        clientId);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error while attempting to filter issue: {ex.Message}\n{ex.StackTrace}", ex);
+                _logger.LogError(
+                    $"Error while attempting to filter issue: {ex.Message}\n{ex.StackTrace}", ex);
             }
         }
     }

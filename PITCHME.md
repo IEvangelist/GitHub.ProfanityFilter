@@ -79,7 +79,7 @@ public bool IsPayloadSignatureValid(
 
 ---
 
-```cs zoom-12
+```cs zoom-11
 static bool IsSignatureValid(
 	string a,
 	string b)
@@ -161,7 +161,7 @@ public ValueTask DispatchAsync(
 
 ---
 
-# @color[magenta](`{`) @color[cyan]( demo ) @color[magenta](`}`)
+# @color[magenta](`{`) [@color[cyan](demo)](https://github.com/IEvangelist/GitHub.ProfanityFilter/issues) @color[magenta](`}`)
 
 ---
 

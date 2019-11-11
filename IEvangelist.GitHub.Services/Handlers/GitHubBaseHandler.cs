@@ -13,9 +13,13 @@ namespace IEvangelist.GitHub.Services.Hanlders
         public GitHubBaseHandler(IGitHubGraphQLClient client, ILogger<T> logger) =>
             (_client, _logger) = (client, logger);
 
-        internal FilterResult ApplyProfanityFilter(string title, string body, IProfanityFilter filter)
+        internal FilterResult ApplyProfanityFilter(
+            string title,
+            string body,
+            IProfanityFilter filter)
         {
-            if (string.IsNullOrWhiteSpace(title) && string.IsNullOrWhiteSpace(body))
+            if (string.IsNullOrWhiteSpace(title) &&
+                string.IsNullOrWhiteSpace(body))
             {
                 return FilterResult.NotFiltered;
             }
@@ -23,8 +27,10 @@ namespace IEvangelist.GitHub.Services.Hanlders
             var filterTitle = filter?.IsProfane(title) ?? false;
             var filterBody = filter?.IsProfane(body) ?? false;
 
-            var resultingTitle = filterTitle ? filter?.ApplyFilter(title, '*') : title;
-            var resultingBody = filterBody ? filter?.ApplyFilter(body) : body;
+            var resultingTitle = 
+                filterTitle ? filter?.ApplyFilter(title, '*') : title;
+            var resultingBody = 
+                filterBody ? filter?.ApplyFilter(body) : body;
 
             if (filterTitle)
             {

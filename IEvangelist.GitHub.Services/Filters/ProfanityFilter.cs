@@ -29,7 +29,10 @@ namespace IEvangelist.GitHub.Services.Filters
 
             return string.Join(
                 " ",
-                words.Select(_ => _.isProfane ? GetReplacement(_.word, placeHolder) : _.word));
+                words.Select(_ => 
+                    _.isProfane
+                        ? GetReplacement(_.word, placeHolder)
+                        : _.word));
         }
 
         string GetReplacement(string word, char? placeHolder = null) =>

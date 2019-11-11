@@ -29,9 +29,9 @@ namespace IEvangelist.GitHub.ProfanityFilter
             ILogger<WebhookFunction> logger) =>
             (_payloadValidator, _webhookDispatcher, _logger) = (payloadValidator, webhookDispatcher, logger);
 
-        [FunctionName("ProcessWebhook")]
-        public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "POST", Route = null)] HttpRequest request)
+        [FunctionName(nameof(ProcessWebhook))]
+        public async Task<IActionResult> ProcessWebhook(
+            [HttpTrigger(AuthorizationLevel.Function, "POST")] HttpRequest request)
         {
             try
             {
