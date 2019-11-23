@@ -24,30 +24,31 @@ namespace IEvangelist.GitHub.Services.Hanlders
                 return FilterResult.NotFiltered;
             }
 
-            var filterTitle = filter?.IsProfane(title) ?? false;
-            var filterBody = filter?.IsProfane(body) ?? false;
+            var (resultingTitle, isTitleFiltered) = ApplyFilter(title, filter, _logger, '*');
+            var (resultingBody, isBodyFiltered) = ApplyFilter(body, filter, _logger);
 
-            var resultingTitle = 
-                filterTitle ? filter?.ApplyFilter(title, '*') : title;
-            var resultingBody = 
-                filterBody ? filter?.ApplyFilter(body) : body;
+            return new FilterResult(
+                resultingTitle,
+                isTitleFiltered,
+                resultingBody,
+                isBodyFiltered);
+        }
 
-            if (filterTitle)
+        static (string text, bool isFiltered) ApplyFilter(
+            string text, 
+            IProfanityFilter filter, 
+            ILogger logger, 
+            char? placeHolder = null)
+        {
+            var filterText = filter?.IsProfane(text) ?? false;
+            var resultingText = filterText ? filter?.ApplyFilter(text, placeHolder) : text;
+
+            if (filterText)
             {
-                _logger.LogInformation($"Replaced title: {resultingTitle}");
+                logger.LogInformation($"Replaced text: {resultingText}");
             }
-            if (filterBody)
-            {
-                _logger.LogInformation($"Replaced body: {resultingBody}");
-            }
 
-            return new FilterResult
-            {
-                Title = resultingTitle,
-                IsTitleFiltered = filterTitle,
-                Body = resultingBody,
-                IsBodyFiltered = filterBody
-            };
+            return (resultingText, filterText);
         }
     }
 }

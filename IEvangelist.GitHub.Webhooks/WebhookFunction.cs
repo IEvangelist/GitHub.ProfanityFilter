@@ -27,7 +27,8 @@ namespace IEvangelist.GitHub.ProfanityFilter
             IGitHubPayloadValidator payloadValidator,
             IGitHubWebhookDispatcher webhookDispatcher,
             ILogger<WebhookFunction> logger) =>
-            (_payloadValidator, _webhookDispatcher, _logger) = (payloadValidator, webhookDispatcher, logger);
+            (_payloadValidator, _webhookDispatcher, _logger) =
+                (payloadValidator, webhookDispatcher, logger);
 
         [FunctionName(nameof(ProcessWebhook))]
         public async Task<IActionResult> ProcessWebhook(
