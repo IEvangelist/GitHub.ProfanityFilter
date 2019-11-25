@@ -19,7 +19,6 @@ namespace IEvangelist.GitHub.Services.Handlers
         : GitHubBaseHandler<IssueHandler>, IIssueHandler
     {
         readonly GitHubOptions _options;
-        readonly IProfanityFilter _profanityFilter;
         readonly IRepository<FilterActivity> _repository;
 
         public IssueHandler(
@@ -28,9 +27,8 @@ namespace IEvangelist.GitHub.Services.Handlers
             IOptions<GitHubOptions> options,
             IProfanityFilter profanityFilter,
             IRepository<FilterActivity> repository)
-            : base(client, logger) =>
-            (_profanityFilter, _options, _repository) = 
-                (profanityFilter, options.Value, repository);
+            : base(client, profanityFilter, logger) =>
+            (_options, _repository) = (options.Value, repository);
 
         public async ValueTask HandleIssueAsync(string payloadJson)
         {

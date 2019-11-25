@@ -8,15 +8,18 @@ namespace IEvangelist.GitHub.Services.Hanlders
     public class GitHubBaseHandler<T>
     {
         protected readonly IGitHubGraphQLClient _client;
+        protected readonly IProfanityFilter _profanityFilter;
         protected readonly ILogger<T> _logger;
 
-        public GitHubBaseHandler(IGitHubGraphQLClient client, ILogger<T> logger) =>
-            (_client, _logger) = (client, logger);
+        public GitHubBaseHandler(
+            IGitHubGraphQLClient client,
+            IProfanityFilter profanityFilter,
+            ILogger<T> logger) =>
+            (_client, _profanityFilter, _logger) = (client, profanityFilter, logger);
 
-        internal FilterResult ApplyProfanityFilter(
+        internal FilterResult TryApplyProfanityFilter(
             string title,
-            string body,
-            IProfanityFilter filter)
+            string body)
         {
             if (string.IsNullOrWhiteSpace(title) &&
                 string.IsNullOrWhiteSpace(body))
@@ -24,8 +27,8 @@ namespace IEvangelist.GitHub.Services.Hanlders
                 return FilterResult.NotFiltered;
             }
 
-            var (resultingTitle, isTitleFiltered) = ApplyFilter(title, filter, _logger, '*');
-            var (resultingBody, isBodyFiltered) = ApplyFilter(body, filter, _logger);
+            var (resultingTitle, isTitleFiltered) = TryApplyFilter(title, _logger, '*');
+            var (resultingBody, isBodyFiltered) = TryApplyFilter(body,  _logger);
 
             return new FilterResult(
                 resultingTitle,
@@ -34,14 +37,16 @@ namespace IEvangelist.GitHub.Services.Hanlders
                 isBodyFiltered);
         }
 
-        static (string text, bool isFiltered) ApplyFilter(
-            string text, 
-            IProfanityFilter filter, 
-            ILogger logger, 
+        (string text, bool isFiltered) TryApplyFilter(
+            string text,
+            ILogger logger,
             char? placeHolder = null)
         {
-            var filterText = filter?.IsProfane(text) ?? false;
-            var resultingText = filterText ? filter?.ApplyFilter(text, placeHolder) : text;
+            var filterText = _profanityFilter?.IsProfane(text) ?? false;
+            var resultingText =
+                filterText
+                    ? _profanityFilter?.ApplyFilter(text, placeHolder)
+                    : text;
 
             if (filterText)
             {
