@@ -42,7 +42,7 @@ namespace IEvangelist.GitHub.Repository
                                       .Where(predicate)
                                       .ToFeedIterator();
 
-                IList<T> results = new List<T>();
+                var results = new List<T>();
                 while (iterator.HasMoreResults)
                 {
                     foreach (var result in await iterator.ReadNextAsync())

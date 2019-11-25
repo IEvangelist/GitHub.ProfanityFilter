@@ -12,11 +12,8 @@ namespace IEvangelist.GitHub.Services
 
         public GitHubWebhookDispatcher(
             IIssueHandler issueHandler,
-            IPullRequestHandler pullRequestHandler)
-        {
-            _issueHandler = issueHandler;
-            _pullRequestHandler = pullRequestHandler;
-        }
+            IPullRequestHandler pullRequestHandler) =>
+            (_issueHandler, _pullRequestHandler) = (issueHandler, pullRequestHandler);
 
         public ValueTask DispatchAsync(string eventName, string payloadJson)
             => eventName switch
