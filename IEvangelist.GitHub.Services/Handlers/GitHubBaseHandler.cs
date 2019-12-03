@@ -27,8 +27,8 @@ namespace IEvangelist.GitHub.Services.Hanlders
                 return FilterResult.NotFiltered;
             }
 
-            var (resultingTitle, isTitleFiltered) = TryApplyFilter(title, _logger, '*');
-            var (resultingBody, isBodyFiltered) = TryApplyFilter(body,  _logger);
+            var (resultingTitle, isTitleFiltered) = TryApplyFilter(title, '*');
+            var (resultingBody, isBodyFiltered) = TryApplyFilter(body);
 
             return new FilterResult(
                 resultingTitle,
@@ -39,7 +39,6 @@ namespace IEvangelist.GitHub.Services.Hanlders
 
         (string text, bool isFiltered) TryApplyFilter(
             string text,
-            ILogger logger,
             char? placeHolder = null)
         {
             var filterText = _profanityFilter?.IsProfane(text) ?? false;
@@ -50,7 +49,7 @@ namespace IEvangelist.GitHub.Services.Hanlders
 
             if (filterText)
             {
-                logger.LogInformation($"Replaced text: {resultingText}");
+                _logger.LogInformation($"Replaced text: {resultingText}");
             }
 
             return (resultingText, filterText);
