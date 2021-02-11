@@ -4,11 +4,11 @@
     {
         internal static FilterResult NotFiltered { get; } = new FilterResult();
 
-        internal readonly string Title;
-        internal readonly bool IsTitleFiltered;
+        internal string Title { get; }
+        internal bool IsTitleFiltered { get; }
 
-        internal readonly string Body;
-        internal readonly bool IsBodyFiltered;
+        internal string Body { get; }
+        internal bool IsBodyFiltered { get; }
 
         internal bool IsFiltered => IsTitleFiltered || IsBodyFiltered;
 
@@ -18,6 +18,6 @@
             string body,
             bool isBodyFiltered) =>
             (Title, IsTitleFiltered, Body, IsBodyFiltered) =
-                (title, isTitleFiltered, body, isBodyFiltered);       
+                (title, isTitleFiltered, body, isBodyFiltered);
     }
 }

@@ -1,11 +1,11 @@
-﻿using IEvangelist.GitHub.Repository;
-using IEvangelist.GitHub.Services.Enums;
+﻿using IEvangelist.GitHub.Services.Enums;
 using IEvangelist.GitHub.Services.Extensions;
 using IEvangelist.GitHub.Services.Filters;
 using IEvangelist.GitHub.Services.GraphQL;
 using IEvangelist.GitHub.Services.Hanlders;
 using IEvangelist.GitHub.Services.Models;
 using IEvangelist.GitHub.Services.Options;
+using Microsoft.Azure.CosmosRepository;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Octokit;
@@ -93,7 +93,7 @@ namespace IEvangelist.GitHub.Services.Handlers
                     (title, body) = await _client.GetPullRequestTitleAndBodyAsync(pullRequest.Number);
                 }
 
-                var filterResult = ApplyProfanityFilter(title, body, _profanityFilter);
+                var filterResult = TryApplyProfanityFilter(title, body);
                 if (filterResult.IsFiltered)
                 {
                     await _client.UpdatePullRequestAsync(pullRequest.Number, new PullRequestUpdate
@@ -109,7 +109,7 @@ namespace IEvangelist.GitHub.Services.Handlers
                         {
                             Id = pullRequest.NodeId,
                             WasProfane = true,
-                            Type = ActivityType.Issue,
+                            ActivityType = ActivityType.Issue,
                             MutationOrNodeId = clientId,
                             WorkedOn = DateTime.Now,
                             OriginalTitleText = title,
