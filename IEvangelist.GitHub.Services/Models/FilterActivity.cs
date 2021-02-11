@@ -1,15 +1,14 @@
-﻿using IEvangelist.GitHub.Repository;
-using IEvangelist.GitHub.Services.Enums;
-using Newtonsoft.Json;
+﻿using IEvangelist.GitHub.Services.Enums;
+using Microsoft.Azure.CosmosRepository;
 using System;
 
 namespace IEvangelist.GitHub.Services.Models
 {
-    public class FilterActivity : BaseDocument
+    public class FilterActivity : Item
     {
         public string MutationOrNodeId { get; set; }
         
-        public ActivityType Type { get; set; }
+        public ActivityType ActivityType { get; set; }
 
         public DateTime WorkedOn { get; set; }
 

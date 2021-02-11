@@ -1,5 +1,4 @@
-﻿using IEvangelist.GitHub.Repository.Extensions;
-using IEvangelist.GitHub.Services.Filters;
+﻿using IEvangelist.GitHub.Services.Filters;
 using IEvangelist.GitHub.Services.GraphQL;
 using IEvangelist.GitHub.Services.Handlers;
 using IEvangelist.GitHub.Services.Options;
@@ -26,6 +25,6 @@ namespace IEvangelist.GitHub.Services.Extensions
                     .AddSingleton<IWordReplacerProvider, WordReplacerProvider>()
                     .AddSingleton<IWordReplacer, GitHubEmojiWordReplacer>()
                     .AddSingleton<IWordReplacer, LintLickerWordReplacer>()
-                    .AddGitHubRepository(configuration);
+                    .AddCosmosRepository();
     }
 }
